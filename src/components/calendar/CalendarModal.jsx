@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeFormModal } from '../../store/actions/uiActions';
 
 const customStyles = {
   content: {
@@ -24,6 +26,8 @@ const CalendarModal = () => {
   const [dateStart, setDateStart] = useState(now.toDate());
   const [dateEnd, setDateEnd] = useState(nowPlusOne.toDate());
   const [titleValid, setTitleValid] = useState(true);
+  const dispatch = useDispatch();
+  const { modalOpen } = useSelector((state) => state.ui);
 
   const [formValues, setFormValues] = useState({
     title: 'Evento',
@@ -33,7 +37,7 @@ const CalendarModal = () => {
   });
 
   const closeModal = () => {
-    /* TODO: Cerrar Modal */
+    dispatch(closeFormModal());
   };
 
   const { title, notes, start, end } = formValues;
@@ -85,7 +89,14 @@ const CalendarModal = () => {
   };
 
   return (
-    <Modal isOpen={true} style={customStyles} closeTimeoutMS={200} className={'modal'} overlayClassName={'modal-fondo'}>
+    <Modal
+      isOpen={modalOpen}
+      style={customStyles}
+      onRequestClose={closeModal}
+      closeTimeoutMS={200}
+      className={'modal'}
+      overlayClassName={'modal-fondo'}
+    >
       <h1> Nuevo evento </h1>
       <hr />
       <form className='container' onSubmit={handleSubmitForm}>
