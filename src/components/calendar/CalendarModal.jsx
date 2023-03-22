@@ -1,10 +1,11 @@
 import moment from 'moment/moment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeFormModal } from '../../store/actions/uiActions';
+import { addNewEvent, clearActiveEvent, updateEvent } from '../../store/actions/eventsActions';
 
 const customStyles = {
   content: {
@@ -22,22 +23,34 @@ Modal.setAppElement('#root');
 const now = moment().minutes(0).seconds(0).add(1, 'hours');
 const nowPlusOne = now.clone().add(1, 'hours');
 
+const initEvent = {
+  title: '',
+  notes: '',
+  start: now.toDate(),
+  end: nowPlusOne.toDate(),
+};
+
 const CalendarModal = () => {
   const [dateStart, setDateStart] = useState(now.toDate());
   const [dateEnd, setDateEnd] = useState(nowPlusOne.toDate());
   const [titleValid, setTitleValid] = useState(true);
   const dispatch = useDispatch();
+  const { activeEvent } = useSelector((state) => state.events);
   const { modalOpen } = useSelector((state) => state.ui);
+  const [formValues, setFormValues] = useState(initEvent);
 
-  const [formValues, setFormValues] = useState({
-    title: 'Evento',
-    notes: '',
-    start: now.toDate(),
-    end: nowPlusOne.toDate(),
-  });
+  useEffect(() => {
+    if (activeEvent) {
+      setFormValues(activeEvent);
+    } else {
+      setFormValues(initEvent);
+    }
+  }, [activeEvent]);
 
   const closeModal = () => {
     dispatch(closeFormModal());
+    dispatch(clearActiveEvent());
+    setFormValues(initEvent);
   };
 
   const { title, notes, start, end } = formValues;
@@ -81,11 +94,24 @@ const CalendarModal = () => {
     }
 
     /* TODO Realizar grabación en Base de datos */
+    if (activeEvent) {
+      console.log('Holiwis');
+      dispatch(updateEvent(formValues));
+    } else {
+      dispatch(
+        addNewEvent({
+          ...formValues,
+          id: new Date().getTime(),
+          user: {
+            _id: '123',
+            name: 'Mariela',
+          },
+        })
+      );
+    }
 
     setTitleValid(true);
     closeModal();
-
-    console.log(formValues);
   };
 
   return (
@@ -97,7 +123,7 @@ const CalendarModal = () => {
       className={'modal'}
       overlayClassName={'modal-fondo'}
     >
-      <h1> Nuevo evento </h1>
+      <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'} </h1>
       <hr />
       <form className='container' onSubmit={handleSubmitForm}>
         <div className='form-group mb-2'>
