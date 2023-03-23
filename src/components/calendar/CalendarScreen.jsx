@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../ui/Navbar';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeFormModal, openFormModal } from '../../store/actions/uiActions';
 import AddNewFab from '../ui/AddNewFab';
 import DeleteEventFab from '../ui/DeleteEventFab';
-import { addActiveEvent, clearActiveEvent } from '../../store/actions/eventsActions';
+import { addActiveEvent, clearActiveEvent, eventStartLoading } from '../../store/actions/eventsActions';
 
 moment.locale('es');
 
@@ -20,17 +20,19 @@ const localizer = momentLocalizer(moment);
 const CalendarScreen = () => {
   const [lastView, setLastView] = useState(localStorage.getItem('lastView') || 'month');
   const dispatch = useDispatch();
-  const { events } = useSelector((state) => state.events);
-  const { activeEvent } = useSelector((state) => state.events);
+  const { user } = useSelector((state) => state.auth);
+  const { events, activeEvent } = useSelector((state) => state.events);
+
+  useEffect(() => {
+    dispatch(eventStartLoading());
+  }, [dispatch]);
 
   const onDoubleClick = (e) => {
-    console.log(e);
     dispatch(addActiveEvent(e));
     dispatch(openFormModal());
   };
 
   const onSelectEvent = (e) => {
-    console.log(e);
     dispatch(closeFormModal());
     dispatch(addActiveEvent(e));
   };
@@ -46,7 +48,7 @@ const CalendarScreen = () => {
 
   const eventsStyleGetter = (event, start, end, isSelected) => {
     const style = {
-      backgroundColor: '#367CF7',
+      backgroundColor: user.uid === event.user._id ? '#367CF7' : '#465660',
       borderRadius: '0px',
       opacity: 0.8,
       display: 'block',

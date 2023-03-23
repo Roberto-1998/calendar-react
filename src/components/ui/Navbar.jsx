@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { logoutUser } from '../../store/actions/authActions';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logoutEvents } from '../../store/actions/eventsActions';
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -11,6 +12,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    dispatch(logoutEvents());
     navigate('/login');
   };
 

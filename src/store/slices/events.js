@@ -1,19 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import moment from 'moment';
 
 const initialState = {
-  events: [
-    {
-      id: new Date().getTime(),
-      title: 'Cumpleaños del jefe',
-      start: moment().toDate(),
-      end: moment().add(2, 'hours').toDate(),
-      user: {
-        _id: '123',
-        name: 'Roberto',
-      },
-    },
-  ],
+  events: [],
   activeEvent: null,
 };
 
@@ -38,8 +26,23 @@ const events = createSlice({
       state.events = state.events.filter((e) => e.id !== state.activeEvent.id);
       state.activeEvent = null;
     },
+    setLoadEvents: (state, { payload }) => {
+      state.events = payload;
+    },
+    setLogoutEvents: (state) => {
+      state.activeEvent = null;
+      state.events = [];
+    },
   },
 });
 
-export const { setActiveEvent, setNewEvent, setClearActiveEvent, setUpdateEvent, setEventDelete } = events.actions;
+export const {
+  setActiveEvent,
+  setNewEvent,
+  setClearActiveEvent,
+  setUpdateEvent,
+  setEventDelete,
+  setLoadEvents,
+  setLogoutEvents,
+} = events.actions;
 export default events.reducer;

@@ -6,8 +6,6 @@ import './styles.css';
 import { Provider } from 'react-redux';
 import store from './store/store';
 
-console.log(process.env);
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>

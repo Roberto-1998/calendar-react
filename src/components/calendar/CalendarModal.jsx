@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeFormModal } from '../../store/actions/uiActions';
-import { addNewEvent, clearActiveEvent, updateEvent } from '../../store/actions/eventsActions';
+import { clearActiveEvent, eventStartAddNew, eventStartUpdate } from '../../store/actions/eventsActions';
 
 const customStyles = {
   content: {
@@ -96,18 +96,9 @@ const CalendarModal = () => {
     /* TODO Realizar grabación en Base de datos */
     if (activeEvent) {
       console.log('Holiwis');
-      dispatch(updateEvent(formValues));
+      dispatch(eventStartUpdate(formValues));
     } else {
-      dispatch(
-        addNewEvent({
-          ...formValues,
-          id: new Date().getTime(),
-          user: {
-            _id: '123',
-            name: 'Mariela',
-          },
-        })
-      );
+      dispatch(eventStartAddNew(formValues));
     }
 
     setTitleValid(true);
