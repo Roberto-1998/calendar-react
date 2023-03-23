@@ -1,11 +1,24 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { logoutUser } from '../../store/actions/authActions';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/login');
+  };
+
   return (
     <div className='navbar navbar-dark bg-dark mb-4 pr-4 px-3'>
-      <span className='navbar-brand'>Roberto</span>
+      <span className='navbar-brand'>{user.name}</span>
 
-      <button className='btn btn-outline-danger'>
+      <button className='btn btn-outline-danger' onClick={handleLogout}>
         <i className='fas fa-sign-out-alt'></i>
         <span> Salir</span>
       </button>
